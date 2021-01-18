@@ -1,3 +1,25 @@
+CREATE TABLE projects (
+    id INTEGER PRIMARY KEY, 
+    title TEXT, 
+    category TEXT, 
+    funding_goal REAL, 
+    start_date TEXT, 
+    end_date TEXT
+);
+
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY, 
+    name TEXT,
+    age INTEGER
+);
+
+CREATE TABLE pledges (
+    id INTEGER PRIMARY KEY,
+    amount REAL,
+    user_id INTEGER,
+    project_id INTEGER
+);
+
 INSERT INTO users (id, name, age) VALUES (1, 'Finnebar', 17), (2, 'Bear', 6), (3, 'Iguana', 4), (4, 'Alex', 33),
 (5, 'Amanda', 24), (6, 'Sophie', 24), (7, 'Rosey', 9), (8, 'Victoria', 23), (9, 'Franz', 100), (10, 'Hermione', 30),
 (11, 'Voldemort', 90), (12, 'Marisa', 24), (13, 'Swizzle', 4), (14, 'Sirius', 36), (15, 'Albus', 113), (16, 'Squid', 5),
@@ -46,3 +68,24 @@ INSERT INTO pledges (id, amount, user_id, project_id) VALUES
 (28, 90.00, 17, 9),
 (29, 230.00, 16, 6),
 (30, 450.00, 15, 5);
+
+.headers on
+.mode column
+.width auto
+
+def selects_the_titles_and_amount_over_goal_of_all_projects_that_have_met_their_funding_goal
+-- this gives all three columns. i NEED title and SUM-GOAL, when goal>=sum
+SELECT projects.title, projects.funding_goal, SUM(pledges.amount)
+  FROM projects
+  INNER JOIN pledges
+  ON projects.id = pledges.project_id
+  GROUP BY projects.title
+  ORDER BY projects.title;
+  --
+  selects_user_names_and_amounts_of_all_pledges_grouped_by_name_then_orders_them_by_the_summed_amount
+  SELECT users.name, SUM(pledges.amount)
+  FROM users
+  INNER JOIN pledges
+  ON users.id = pledges.user_id
+  GROUP BY users.name
+  ORDER BY SUM(pledges.amount);
